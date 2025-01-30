@@ -21,7 +21,10 @@ MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & options) : rclcpp::Node("
     writer_->open(storage_options);
 
     // Add topic to the bag with metadata
-    rosbag2_cpp::writer_interfaces::WriterTopic writer_topic{topic_, "sensor_msgs/msg/PointCloud2", "cdr"};
+    rosbag2_storage::TopicMetadata writer_topic;
+    writer_topic.name = topic_;
+    writer_topic.type = "sensor_msgs/msg/PointCloud2";
+    writer_topic.serialization_format = "cdr";
     writer_->create_topic(writer_topic);
 
     RCLCPP_INFO(this->get_logger(), "Recording PointCloud2 topic '%s' to '%s'", topic_.c_str(), output_file_.c_str());

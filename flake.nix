@@ -51,7 +51,7 @@
                 ouster-ros
                 rmw-cyclonedds-cpp
                 ublox
-                lidar-bike-components
+                # lidar-bike-components
                 nmea-navsat-driver
               ];
             })
