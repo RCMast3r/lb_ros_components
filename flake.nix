@@ -15,6 +15,24 @@
           inherit system;
           overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ];
         };
+        test_pkg = (with pkgs.rosPackages.jazzy; buildEnv {
+              paths = [
+                ros-core
+                ros-base
+                rclcpp-components
+                sensor-msgs
+                ouster-ros
+                rosbag2-storage-mcap
+                ouster-ros
+                rmw-cyclonedds-cpp
+                ublox
+                lidar-bike-components
+                ament-cmake
+                ament-cmake-core
+                ament-cmake-ros
+                nmea-navsat-driver
+              ];
+            });
 
         jazzy_ros_packages = with pkgs.rosPackages.jazzy; [ ament-cmake geometry-msgs launch launch-ros ouster-sensor-msgs pcl-conversions pcl-ros rclcpp rclcpp-components rclcpp-lifecycle rosidl-default-runtime sensor-msgs std-msgs std-srvs tf2-ros ];
         my_overlay = final: prev: {
@@ -64,7 +82,7 @@
           ];
         };
 
-        packages = pkgs;
+        packages.asdfasdf = test_pkg;
         legacyPackages =
           import nixpkgs {
             inherit system;
