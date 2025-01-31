@@ -56,6 +56,7 @@
         };
       in
       {
+        overlays = my-ros-overlay;
         devShells.default = pkgs.mkShell {
           name = "lidar-bike-env";
           packages = [
