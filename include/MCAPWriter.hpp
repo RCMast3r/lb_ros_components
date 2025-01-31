@@ -5,6 +5,9 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rosbag2_cpp/writer.hpp>
 #include <rosbag2_storage/storage_options.hpp>
+#include <rclcpp/serialization.hpp>
+
+namespace mcap_writer_component {
 
 class MCAPRecorder : public rclcpp::Node
 {
@@ -28,8 +31,9 @@ private:
     // Rosbag2 writer
     std::unique_ptr<rosbag2_cpp::Writer> writer_;
 };
+}
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(MCAPRecorder)
+RCLCPP_COMPONENTS_REGISTER_NODE(mcap_writer_component::MCAPRecorder)
 
 #endif // __MCAPWRITER_H__

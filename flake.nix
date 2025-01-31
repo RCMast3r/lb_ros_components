@@ -47,11 +47,17 @@
               paths = [
                 ros-core
                 ros-base
+                rclcpp-components
+                sensor-msgs
+                ouster-ros
                 rosbag2-storage-mcap
                 ouster-ros
                 rmw-cyclonedds-cpp
                 ublox
-                # lidar-bike-components
+                lidar-bike-components
+                ament-cmake
+                ament-cmake-core
+                ament-cmake-ros
                 nmea-navsat-driver
               ];
             })
