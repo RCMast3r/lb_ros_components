@@ -5,7 +5,7 @@ buildRosPackage {
   src = ./.;
 
   buildType = "ament_cmake";
-  buildInputs = [ ament-cmake-ros rclcpp sensor-msgs rclcpp-components ament-cmake ros-environment ouster-ros rosbag2-cpp launch-ros];
+  propagatedBuildInputs = [ ament-cmake-ros rclcpp sensor-msgs rclcpp-components ament-cmake ros-environment ouster-ros rosbag2-cpp launch-ros];
   checkInputs = [ ament-lint-auto ament-lint-common ];
   nativeBuildInputs = [ ament-cmake-ros ament-cmake ];
 

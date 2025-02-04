@@ -3,7 +3,7 @@
 mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & options) : rclcpp::Node("mcap_recorder", options)
 {
     // Declare parameters
-    this->declare_parameter<std::string>("topic", "/pointcloud");
+    this->declare_parameter<std::string>("topic", "/points");
     this->declare_parameter<std::string>("output_file", "pointcloud_recording");
 
     // Get parameters
