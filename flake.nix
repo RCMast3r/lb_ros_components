@@ -7,8 +7,10 @@
   inputs = {
     nix-ros-overlay.url = "github:lopsided98/nix-ros-overlay/develop";
     nixpkgs.follows = "nix-ros-overlay/nixpkgs"; # IMPORTANT!!!
+    libuvc-cam-src.url = "github:RCMast3r/libuvc_cam";
+    libuvc-cam-src.flake = false;
   };
-  outputs = { self, nix-ros-overlay, nixpkgs }:
+  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src }:
     nix-ros-overlay.inputs.flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
@@ -52,11 +54,11 @@
           });
         };
         ouster-ros-override-overlay = final: prev: {
-
           rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope devshell_overlay; };
         };
         my_overlay = final: prev: {
           lidar-bike-components = final.callPackage ./default.nix { };
+          libuvc-cam = final.callPackage ./libuvc_cam.nix {src = libuvc-cam-src; };
         };
 
         my-ros-overlay = final: prev: {
@@ -87,6 +89,8 @@
                 ament-cmake-core
                 ament-cmake-ros
                 nmea-navsat-driver
+                libuvc-cam
+                foxglove-bridge
               ];
             })
           ];

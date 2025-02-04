@@ -5,17 +5,16 @@
 mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & options) : rclcpp::Node("mcap_recorder", options)
 {
     // Declare parameters
-    this->declare_parameter<std::string>("topic", "/points");
+    this->declare_parameter<std::string>("pointcloud_topic", "/points");
     this->declare_parameter<std::string>("output_file", "pointcloud_recording");
 
     // Get parameters
-    topic_ = this->get_parameter("topic").as_string();
+    _pointcloud_topic = this->get_parameter("topic").as_string();
     output_file_ = this->get_parameter("output_file").as_string();
 
     // Initialize the ROS 2 subscription
 
-
-    subscription_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(topic_, rclcpp::SensorDataQoS(), std::bind(&MCAPRecorder::pointcloud_callback, this, std::placeholders::_1));
+    subscription_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(_pointcloud_topic, rclcpp::SensorDataQoS(), std::bind(&MCAPRecorder::pointcloud_callback, this, std::placeholders::_1));
 
     // Set up the rosbag2 writer
     writer_ = std::make_unique<rosbag2_cpp::Writer>();
@@ -26,12 +25,12 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
 
     // Add topic to the bag with metadata
     rosbag2_storage::TopicMetadata writer_topic;
-    writer_topic.name = topic_;
+    writer_topic.name = _pointcloud_topic;
     writer_topic.type = "sensor_msgs/msg/PointCloud2";
     writer_topic.serialization_format = "cdr";
     writer_->create_topic(writer_topic);
 
-    RCLCPP_INFO(this->get_logger(), "Recording PointCloud2 topic '%s' to '%s'", topic_.c_str(), output_file_.c_str());
+    RCLCPP_INFO(this->get_logger(), "Recording PointCloud2 topic '%s' to '%s'", _pointcloud_topic.c_str(), output_file_.c_str());
 }
 
 void mcap_writer_component::MCAPRecorder::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)

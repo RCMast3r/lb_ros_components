@@ -22,7 +22,7 @@ private:
 
 private:
     // Parameters
-    std::string topic_;
+    std::string _pointcloud_topic, _imu_topic, _camera_topic;
     std::string output_file_;
 
     // ROS 2 entities

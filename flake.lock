@@ -18,6 +18,22 @@
         "type": "github"
       }
     },
+    "libuvc-cam-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1738698539,
+        "narHash": "sha256-3H20O992SN+DTnjBc+Z6GjXzNf1d4yFALw/6JdNu1IM=",
+        "owner": "RCMast3r",
+        "repo": "libuvc_cam",
+        "rev": "bd65852f8b5b6b0095c7e41ed2f1d35ff8681777",
+        "type": "github"
+      },
+      "original": {
+        "owner": "RCMast3r",
+        "repo": "libuvc_cam",
+        "type": "github"
+      }
+    },
     "nix-ros-overlay": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -56,6 +72,7 @@
     },
     "root": {
       "inputs": {
+        "libuvc-cam-src": "libuvc-cam-src",
         "nix-ros-overlay": "nix-ros-overlay",
         "nixpkgs": [
           "nix-ros-overlay",
