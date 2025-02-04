@@ -77,7 +77,25 @@
         "nixpkgs": [
           "nix-ros-overlay",
           "nixpkgs"
-        ]
+        ],
+        "ros2-v4l2-camera-src": "ros2-v4l2-camera-src"
+      }
+    },
+    "ros2-v4l2-camera-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1738711794,
+        "narHash": "sha256-o4IqYr4jKgZ2+3EkNnReMPB2KUPSh2kuOwi6K4v6zQ4=",
+        "owner": "rcmast3r1",
+        "repo": "ros2_v4l2_camera",
+        "rev": "6649cd07072b829630e40b7fd6f02d5b5416cf59",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "rcmast3r1",
+        "ref": "compressed_formats",
+        "repo": "ros2_v4l2_camera",
+        "type": "gitlab"
       }
     },
     "systems": {

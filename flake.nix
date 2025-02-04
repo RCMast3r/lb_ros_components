@@ -9,8 +9,11 @@
     nixpkgs.follows = "nix-ros-overlay/nixpkgs"; # IMPORTANT!!!
     libuvc-cam-src.url = "github:RCMast3r/libuvc_cam";
     libuvc-cam-src.flake = false;
+    # ros2-v4l2-camera-src.url = "https://gitlab.com/muzhyk.belarus/ros2_v4l2_camera.git";
+    ros2-v4l2-camera-src.url = "gitlab:rcmast3r1/ros2_v4l2_camera/compressed_formats";
+    ros2-v4l2-camera-src.flake = false;
   };
-  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src }:
+  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src, ros2-v4l2-camera-src }:
     nix-ros-overlay.inputs.flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
@@ -52,6 +55,13 @@
               sha256 = "sha256-TEO7xqCYxkDCcXejx0qV/sSL1VQccntUI5+q2KtjOJA=";
             };
           });
+          
+            v4l2-camera = prev.v4l2-camera.overrideAttrs (prev: {
+              src = ros2-v4l2-camera-src;
+              propagatedBuildInputs = prev.propagatedBuildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
+              buildInputs = prev.buildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
+            });
+          
         };
         ouster-ros-override-overlay = final: prev: {
           rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope devshell_overlay; };
@@ -91,6 +101,7 @@
                 nmea-navsat-driver
                 libuvc-cam
                 foxglove-bridge
+                v4l2-camera
               ];
             })
           ];
