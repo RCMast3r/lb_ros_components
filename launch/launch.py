@@ -25,12 +25,14 @@ def generate_launch_description():
                     package='mcap_writer_component',
                     plugin='mcap_writer_component::MCAPRecorder',
                     name='mcap_boi',
-                    extra_arguments=[{'use_intra_process_comms': True}]),
+                    parameters=[config]),
+                    # extra_arguments=[{'use_intra_process_comms': True}]),
+                    
                 ComposableNode(
                     package='ouster_ros',
                     plugin='ouster_ros::OusterDriver',
                     name='driver',
-                    extra_arguments=[{'use_intra_process_comms': True}],
+                    # extra_arguments=[{'use_intra_process_comms': True}],
                     parameters=[config])
             ],
             output='both',

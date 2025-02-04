@@ -1,7 +1,7 @@
 driver:
   ros__parameters:
     lidar_ip: 169.254.87.155
-    computer_ip: 169.254.87.111
+    computer_ip: 169.254.3.5
     lidar_mode: "512x20"
     imu_port: 7503
     lidar_port: 7502
@@ -49,12 +49,12 @@ driver:
     # IMG|PCL|IMU|SCAN
     # PCL
     #
-    proc_mask: IMG|PCL|IMU|SCAN
+    proc_mask: PCL|IMU|RAW
 
 mcap_boi:
   ros__parameters:
-    topic: /ouster/points
+    topic: /points
 
 mcap_recorder:
   ros__parameters:
-    topic: /ouster/points
+    topic: /points

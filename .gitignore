@@ -1,5 +1,7 @@
+
 build/
 result/
 result
 lb_rosbag*/
 rosbag*
+*metadata.json

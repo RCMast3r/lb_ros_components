@@ -24,6 +24,7 @@
                 ouster-ros
                 rosbag2-storage-mcap
                 ouster-ros
+                foxglove-bridge
                 rmw-cyclonedds-cpp
                 ublox
                 lidar-bike-components
