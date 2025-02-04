@@ -50,3 +50,11 @@ driver:
     # PCL
     #
     proc_mask: IMG|PCL|IMU|SCAN
+
+mcap_boi:
+  ros__parameters:
+    topic: /ouster/points
+
+mcap_recorder:
+  ros__parameters:
+    topic: /ouster/points

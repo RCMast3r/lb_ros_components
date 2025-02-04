@@ -13,7 +13,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ];
+          overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ouster-ros-override-overlay ];
         };
         test_pkg = (with pkgs.rosPackages.jazzy; buildEnv {
               paths = [
@@ -35,25 +35,34 @@
             });
 
         jazzy_ros_packages = with pkgs.rosPackages.jazzy; [ ament-cmake geometry-msgs launch launch-ros ouster-sensor-msgs pcl-conversions pcl-ros rclcpp rclcpp-components rclcpp-lifecycle rosidl-default-runtime sensor-msgs std-msgs std-srvs tf2-ros ];
+        
+        devshell_overlay = final: prev: {
+          ouster-ros = prev.ouster-ros.overrideAttrs (finalAttrs: previousAttrs: {
+            buildType = "ament_cmake";
+            buildInputs = with pkgs; [ libtins spdlog rosPackages.jazzy.ament-cmake eigen pcl rosPackages.jazzy.rosidl-default-generators rosPackages.jazzy.tf2-eigen ] ++ jazzy_ros_packages;
+            checkInputs = [ pkgs.gtest ];
+            propagatedBuildInputs = with pkgs; [ curl jsoncpp ] ++ jazzy_ros_packages;
+            nativeBuildInputs = with pkgs.rosPackages.jazzy; [ ament-cmake rosidl-default-generators ];
+            src = pkgs.fetchurl {
+              url = "https://github.com/ros2-gbp/ouster-ros-release/archive/release/jazzy/ouster_ros/0.13.2.tar.gz";
+              name = "0.13.2.tar.gz";
+              sha256 = "sha256-TEO7xqCYxkDCcXejx0qV/sSL1VQccntUI5+q2KtjOJA=";
+            };
+          });
+        };
+        ouster-ros-override-overlay = final: prev: {
+
+          rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope devshell_overlay; };
+        };
         my_overlay = final: prev: {
           lidar-bike-components = final.callPackage ./default.nix { };
-          # ouster-ros = prev.ouster-ros.overrideAttrs (finalAttrs: previousAttrs: {
-          #   buildType = "ament_cmake";
-          #   buildInputs = with pkgs; [ libtins spdlog rosPackages.jazzy.ament-cmake eigen pcl rosPackages.jazzy.rosidl-default-generators rosPackages.jazzy.tf2-eigen ] ++ jazzy_ros_packages;
-          #   checkInputs = [ pkgs.gtest ];
-          #   propagatedBuildInputs = with pkgs; [ curl jsoncpp ] ++ jazzy_ros_packages;
-          #   nativeBuildInputs = with pkgs.rosPackages.jazzy; [ ament-cmake rosidl-default-generators ];
-          #   src = pkgs.fetchurl {
-          #     url = "https://github.com/ros2-gbp/ouster-ros-release/archive/release/jazzy/ouster_ros/0.13.2.tar.gz";
-          #     name = "0.13.2.tar.gz";
-          #     sha256 = "sha256-TEO7xqCYxkDCcXejx0qV/sSL1VQccntUI5+q2KtjOJA=";
-          #   };
-          # });
         };
 
         my-ros-overlay = final: prev: {
           rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope my_overlay; };
         };
+
+
       in
       {
         overlays = my-ros-overlay;
@@ -61,7 +70,6 @@
           name = "lidar-bike-env";
           packages = [
             pkgs.colcon
-            # ... other non-ROS packages
             (with pkgs.rosPackages.jazzy; buildEnv {
               paths = [
                 ros-core

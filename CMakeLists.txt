@@ -6,7 +6,6 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
 
-find_package(ouster_ros REQUIRED)
 # https://docs.ros.org/en/jazzy/Tutorials/Advanced/Recording-A-Bag-From-Your-Own-Node-CPP.html
 add_library(mcap_writer_component SHARED src/MCAPWriter.cpp)
 
