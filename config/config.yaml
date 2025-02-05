@@ -59,15 +59,8 @@ mcap_recorder:
   ros__parameters:
     topic: /points
 
-uvc_camera_node:
+v4l2_camera:
   ros__parameters:
-    vendor_id: "0x046d"
-    product_id: "0x0825"
-    serial_num: "E9906370"
-    frame_fmt: "MJPEG" # ANY or UNCOMPRESSED
-    image_width: 1280
-    image_height: 960
-    frames_per_second: 30
-    frame_id: "camera"
-
-
+    video_device: "/dev/video1"
+    image_size: [1920, 1080]
+    pixel_format: "MJPG"

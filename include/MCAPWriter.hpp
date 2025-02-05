@@ -1,6 +1,8 @@
 #ifndef __MCAPWRITER_H__
 #define __MCAPWRITER_H__
 
+#include <sensor_msgs/msg/imu.hpp>
+#include <sensor_msgs/msg/image.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <rosbag2_cpp/writer.hpp>
@@ -19,14 +21,17 @@ public:
 
 private:
     void pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
-
+    void imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg);
+    void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
 private:
     // Parameters
     std::string _pointcloud_topic, _imu_topic, _camera_topic;
     std::string output_file_;
 
     // ROS 2 entities
-    rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr subscription_;
+    rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr subscription_pointcloud_;
+    rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr subscription_imu_;
+    rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_image_;
 
     // Rosbag2 writer
     std::unique_ptr<rosbag2_cpp::Writer> writer_;

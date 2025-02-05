@@ -35,12 +35,14 @@ def generate_launch_description():
                     # extra_arguments=[{'use_intra_process_comms': True}],
                     parameters=[config]),
                 ComposableNode(
-                    package='libuvc_cam',
-                    plugin='libuvc_cam::UvcCameraNode',
-                    name='libuvc_cam',
+                    package='v4l2_camera',
+                    plugin='v4l2_camera::V4L2Camera',
+                    name='v4l2_camera',
                     parameters=[config])
             ],
             output='both',
     )
 
     return launch.LaunchDescription([container])
+
+# TODO ros2 run v4l2_camera v4l2_camera_node --ros-args -p video_device:="/dev/video1" -p image_size:=[1920,1080] -p pixel_format:="MJPG"
