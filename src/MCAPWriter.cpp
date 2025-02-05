@@ -9,13 +9,13 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
     this->declare_parameter<std::string>("pointcloud_topic", "/points");
     this->declare_parameter<std::string>("imu_topic", "/imu");
     this->declare_parameter<std::string>("image_topic", "/image_raw");
-    this->declare_parameter<std::string>("output_file", "pointcloud_recording");
+    this->declare_parameter<std::string>("output_base", "/media/data");
 
     // Get parameters
     _pointcloud_topic = this->get_parameter("pointcloud_topic").as_string();
     _imu_topic = this->get_parameter("imu_topic").as_string();
     _camera_topic = this->get_parameter("image_topic").as_string();
-    output_file_ = this->get_parameter("output_file").as_string();
+    output_file_ = this->get_parameter("output_base").as_string();
 
     // Initialize the ROS 2 subscriptions
     subscription_pointcloud_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
@@ -33,7 +33,11 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
     // Set up the rosbag2 writer
     writer_ = std::make_unique<rosbag2_cpp::Writer>();
     rosbag2_storage::StorageOptions storage_options;
-    storage_options.uri = "lb_rosbag_" + std::to_string(static_cast<int>(now().seconds()));
+    if(! (output_file_.back() == '/'))
+    {
+        output_file_ +="/";
+    }
+    storage_options.uri = output_file_ + "lb_rosbag_" + std::to_string(static_cast<int>(now().seconds()));
     storage_options.storage_id = "mcap";  // Ensure MCAP format
     writer_->open(storage_options);
 

@@ -56,19 +56,24 @@
             };
           });
           
-            v4l2-camera = prev.v4l2-camera.overrideAttrs (prev: {
-              src = ros2-v4l2-camera-src;
-              propagatedBuildInputs = prev.propagatedBuildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
-              buildInputs = prev.buildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
-            });
+            # v4l2-camera = prev.v4l2-camera.overrideAttrs (prev: {
+            #   src = ros2-v4l2-camera-src;
+            #   propagatedBuildInputs = prev.propagatedBuildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
+            #   buildInputs = prev.buildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
+            # });
           
         };
         ouster-ros-override-overlay = final: prev: {
           rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope devshell_overlay; };
         };
         my_overlay = final: prev: {
+            v4l2-camera = prev.v4l2-camera.overrideAttrs (prev: {
+              src = ros2-v4l2-camera-src;
+              propagatedBuildInputs = prev.propagatedBuildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
+              # buildInputs = prev.buildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
+            });
           lidar-bike-components = final.callPackage ./default.nix { };
-          libuvc-cam = final.callPackage ./libuvc_cam.nix {src = libuvc-cam-src; };
+          libuvc-cam = final.callPackage ./libuvc_cam.nix { src = libuvc-cam-src; };
         };
 
         my-ros-overlay = final: prev: {
