@@ -57,7 +57,7 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
     writer_topic.type = "sensor_msgs/msg/Image";
     writer_->create_topic(writer_topic);
 
-    RCLCPP_INFO(this->get_logger(), "Recording topics: '%s', '%s', '%s' to '%s'",
+    RCLCPP_DEBUG(this->get_logger(), "Recording topics: '%s', '%s', '%s' to '%s'",
                 _pointcloud_topic.c_str(), _imu_topic.c_str(), _camera_topic.c_str(), output_file_.c_str());
 
     http_thread_ = std::thread(&MCAPRecorder::start_http_server, this);
@@ -96,13 +96,13 @@ void mcap_writer_component::MCAPRecorder::image_callback(const sensor_msgs::msg:
 }
 
 
-void MCAPRecorder::start_http_server()
+void mcap_writer_component::MCAPRecorder::start_http_server()
 {
     httplib::Server svr;
 
     // Serve the webpage with Start/Stop buttons
     svr.Get("/", [](const httplib::Request &, httplib::Response &res) {
-        std::string html = "
+        std::string html = R"(
             <!DOCTYPE html>
             <html>
             <head>
@@ -121,15 +121,15 @@ void MCAPRecorder::start_http_server()
             </head>
             <body>
                 <h1>MCAP Recorder</h1>
-                <button onclick="sendCommand('/start')">Start Recording</button>
-                <button onclick="sendCommand('/stop')">Stop Recording</button>
+                <button onclick=\"sendCommand\('/start'\)\">Start Recording</button>
+                <button onclick=\"sendCommand\('/stop'\)\">Stop Recording</button>
                 <p id="status">Status: Idle</p>
             </body>
             </html>
-        ";
+        )";
         res.set_content(html, "text/html");
     });
-
+    
     // Start recording
     svr.Get("/start", [this](const httplib::Request &, httplib::Response &res) {
         handle_start();
@@ -142,11 +142,11 @@ void MCAPRecorder::start_http_server()
         res.set_content("Recording stopped", "text/plain");
     });
 
-    RCLCPP_INFO(this->get_logger(), "HTTP server running on port 8080...");
+    RCLCPP_DEBUG(this->get_logger(), "HTTP server running on port 8080...");
     svr.listen("0.0.0.0", 8080);
 }
 
-void MCAPRecorder::handle_start()
+void mcap_writer_component::MCAPRecorder::handle_start()
 {
     if (!_writing)
     {
@@ -159,17 +159,17 @@ void MCAPRecorder::handle_start()
         storage_options.storage_id = "mcap";  // Ensure MCAP format
         writer_->open(storage_options);
         _writing = true;
-        RCLCPP_INFO(this->get_logger(), "Started recording.");
+        RCLCPP_DEBUG(this->get_logger(), "Started recording.");
     }
 }
 
-void MCAPRecorder::handle_stop()
+void mcap_writer_component::MCAPRecorder::handle_stop()
 {
     if (_writing)
     {
         _writing = false;
         
-        RCLCPP_INFO(this->get_logger(), "Stopped recording.");
+        RCLCPP_DEBUG(this->get_logger(), "Stopped recording.");
     }
 }
 
@@ -182,12 +182,12 @@ mcap_writer_component::MCAPRecorder::~MCAPRecorder()
     if (writer_)
     {
         writer_.reset();
-        writer_.close();
+        writer_->close();
     }
     server_running_ = false;
     if (http_thread_.joinable())
     {
         http_thread_.join();
     }
-    RCLCPP_INFO(this->get_logger(), "Shutting down MCAPRecorder");
+    RCLCPP_DEBUG(this->get_logger(), "Shutting down MCAPRecorder");
 }

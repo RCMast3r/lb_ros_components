@@ -36,7 +36,7 @@ private:
     std::thread http_thread_;
     std::atomic<bool> _writing{false};
     std::atomic<bool> server_running_{true};
-    
+
 private:
     // Parameters
     std::string _pointcloud_topic, _imu_topic, _camera_topic;
@@ -50,7 +50,7 @@ private:
     // Rosbag2 writer
     std::unique_ptr<rosbag2_cpp::Writer> writer_;
 
-    bool _writing = false;
+
 };
 }
 
