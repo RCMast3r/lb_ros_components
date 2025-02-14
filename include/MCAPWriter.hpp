@@ -1,5 +1,10 @@
 #ifndef __MCAPWRITER_H__
 #define __MCAPWRITER_H__
+#include <httplib.h>
+
+#include <thread>
+#include <atomic>
+
 
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -24,6 +29,15 @@ private:
     void imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg);
     void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
 private:
+    void start_http_server();
+    void handle_start();
+    void handle_stop();
+    
+    std::thread http_thread_;
+    std::atomic<bool> _writing{false};
+    std::atomic<bool> server_running_{true};
+    
+private:
     // Parameters
     std::string _pointcloud_topic, _imu_topic, _camera_topic;
     std::string output_file_;
@@ -35,6 +49,8 @@ private:
 
     // Rosbag2 writer
     std::unique_ptr<rosbag2_cpp::Writer> writer_;
+
+    bool _writing = false;
 };
 }
 

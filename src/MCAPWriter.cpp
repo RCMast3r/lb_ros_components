@@ -59,25 +59,122 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
 
     RCLCPP_INFO(this->get_logger(), "Recording topics: '%s', '%s', '%s' to '%s'",
                 _pointcloud_topic.c_str(), _imu_topic.c_str(), _camera_topic.c_str(), output_file_.c_str());
+
+    http_thread_ = std::thread(&MCAPRecorder::start_http_server, this);
+
 }
 
 void mcap_writer_component::MCAPRecorder::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
-    writer_->write(*msg, _pointcloud_topic, now());
-    RCLCPP_DEBUG(this->get_logger(), "Recorded PointCloud2 message");
+    if(_writing)
+    {
+        writer_->write(*msg, _pointcloud_topic, now());
+        RCLCPP_DEBUG(this->get_logger(), "Recorded PointCloud2 message");
+    }
+    
 }
 
 void mcap_writer_component::MCAPRecorder::imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
 {
-    writer_->write(*msg, _imu_topic, now());
-    RCLCPP_DEBUG(this->get_logger(), "Recorded IMU message");
+    
+    if(_writing)
+    {
+        writer_->write(*msg, _imu_topic, now());
+        RCLCPP_DEBUG(this->get_logger(), "Recorded IMU message");
+    }
+    
 }
 
 void mcap_writer_component::MCAPRecorder::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-    writer_->write(*msg, _camera_topic, now());
-    RCLCPP_DEBUG(this->get_logger(), "Recorded Image message");
+    if(_writing)
+    {
+        writer_->write(*msg, _camera_topic, now());
+        RCLCPP_DEBUG(this->get_logger(), "Recorded Image message");
+    }
+    
 }
+
+
+void MCAPRecorder::start_http_server()
+{
+    httplib::Server svr;
+
+    // Serve the webpage with Start/Stop buttons
+    svr.Get("/", [](const httplib::Request &, httplib::Response &res) {
+        std::string html = "
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>MCAP Recorder</title>
+                <style>
+                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+                    button { font-size: 20px; padding: 10px 20px; margin: 10px; }
+                </style>
+                <script>
+                    function sendCommand(command) {
+                        fetch(command)
+                            .then(response => response.text())
+                            .then(data => document.getElementById('status').innerText = data);
+                    }
+                </script>
+            </head>
+            <body>
+                <h1>MCAP Recorder</h1>
+                <button onclick="sendCommand('/start')">Start Recording</button>
+                <button onclick="sendCommand('/stop')">Stop Recording</button>
+                <p id="status">Status: Idle</p>
+            </body>
+            </html>
+        ";
+        res.set_content(html, "text/html");
+    });
+
+    // Start recording
+    svr.Get("/start", [this](const httplib::Request &, httplib::Response &res) {
+        handle_start();
+        res.set_content("Recording started", "text/plain");
+    });
+
+    // Stop recording
+    svr.Get("/stop", [this](const httplib::Request &, httplib::Response &res) {
+        handle_stop();
+        res.set_content("Recording stopped", "text/plain");
+    });
+
+    RCLCPP_INFO(this->get_logger(), "HTTP server running on port 8080...");
+    svr.listen("0.0.0.0", 8080);
+}
+
+void MCAPRecorder::handle_start()
+{
+    if (!_writing)
+    {
+        rosbag2_storage::StorageOptions storage_options;
+        if(! (output_file_.back() == '/'))
+        {
+            output_file_ +="/";
+        }
+        storage_options.uri = output_file_ + "lb_rosbag_" + std::to_string(static_cast<int>(now().seconds()));
+        storage_options.storage_id = "mcap";  // Ensure MCAP format
+        writer_->open(storage_options);
+        _writing = true;
+        RCLCPP_INFO(this->get_logger(), "Started recording.");
+    }
+}
+
+void MCAPRecorder::handle_stop()
+{
+    if (_writing)
+    {
+        _writing = false;
+        
+        RCLCPP_INFO(this->get_logger(), "Stopped recording.");
+    }
+}
+
+
+
 
 mcap_writer_component::MCAPRecorder::~MCAPRecorder()
 {
@@ -85,6 +182,12 @@ mcap_writer_component::MCAPRecorder::~MCAPRecorder()
     if (writer_)
     {
         writer_.reset();
+        writer_.close();
+    }
+    server_running_ = false;
+    if (http_thread_.joinable())
+    {
+        http_thread_.join();
     }
     RCLCPP_INFO(this->get_logger(), "Shutting down MCAPRecorder");
 }

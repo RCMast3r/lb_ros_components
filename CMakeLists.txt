@@ -5,11 +5,14 @@ find_package(rclcpp_components REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
+find_package(httplib REQUIRED)
 
 # https://docs.ros.org/en/jazzy/Tutorials/Advanced/Recording-A-Bag-From-Your-Own-Node-CPP.html
 add_library(mcap_writer_component SHARED src/MCAPWriter.cpp)
 
 ament_target_dependencies(mcap_writer_component PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components)
+
+target_link_libraries(mcap_writer_component PUBLIC httplib::httplib)
 
 target_include_directories(mcap_writer_component PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
