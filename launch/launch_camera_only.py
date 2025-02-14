@@ -25,20 +25,20 @@ def generate_launch_description():
                     package='mcap_writer_component',
                     plugin='mcap_writer_component::MCAPRecorder',
                     name='mcap_boi',
-                    parameters=[config]),
+                    parameters=[config])
                     # extra_arguments=[{'use_intra_process_comms': True}]),
                     
-                ComposableNode(
-                    package='ouster_ros',
-                    plugin='ouster_ros::OusterDriver',
-                    name='driver',
-                    # extra_arguments=[{'use_intra_process_comms': True}],
-                    parameters=[config]),
-                ComposableNode(
-                    package='libuvc_cam',
-                    plugin='libuvc_cam::UvcCameraNode',
-                    name='libuvc_cam',
-                    parameters=[config])
+                # ComposableNode(
+                #     package='ouster_ros',
+                #     plugin='ouster_ros::OusterDriver',
+                #     name='driver',
+                #     # extra_arguments=[{'use_intra_process_comms': True}],
+                #     parameters=[config]),
+                # ComposableNode(
+                #     package='libuvc_cam',
+                #     plugin='libuvc_cam::UvcCameraNode',
+                #     name='libuvc_cam',
+                #     parameters=[config])
             ],
             output='both',
     )

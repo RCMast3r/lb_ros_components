@@ -104,7 +104,6 @@
                 ament-cmake-core
                 ament-cmake-ros
                 nmea-navsat-driver
-                libuvc-cam
                 foxglove-bridge
                 v4l2-camera
               ];
