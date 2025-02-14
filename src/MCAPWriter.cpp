@@ -9,7 +9,8 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
     this->declare_parameter<std::string>("pointcloud_topic", "/points");
     this->declare_parameter<std::string>("imu_topic", "/imu");
     this->declare_parameter<std::string>("image_topic", "/image_raw");
-    this->declare_parameter<std::string>("output_base", "/media/data");
+    // this->declare_parameter<std::string>("output_base", "/media/data");
+    this->declare_parameter<std::string>("output_base", "/home/ben/");
 
     // Get parameters
     _pointcloud_topic = this->get_parameter("pointcloud_topic").as_string();
@@ -121,8 +122,8 @@ void mcap_writer_component::MCAPRecorder::start_http_server()
             </head>
             <body>
                 <h1>MCAP Recorder</h1>
-                <button onclick=\"sendCommand\('/start'\)\">Start Recording</button>
-                <button onclick=\"sendCommand\('/stop'\)\">Stop Recording</button>
+                <button onclick='sendCommand('/start')'>Start Recording</button>
+                <button onclick='sendCommand('/stop')'>Stop Recording</button>
                 <p id="status">Status: Idle</p>
             </body>
             </html>
