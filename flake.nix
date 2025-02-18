@@ -12,13 +12,16 @@
     # ros2-v4l2-camera-src.url = "https://gitlab.com/muzhyk.belarus/ros2_v4l2_camera.git";
     ros2-v4l2-camera-src.url = "gitlab:rcmast3r1/ros2_v4l2_camera/compressed_formats";
     ros2-v4l2-camera-src.flake = false;
+    nebs-packages.url = "github:RCMast3r/nebs_packages"; # packages for glim-ros2
+    glim-ros2-src.url = "github:koide3/glim_ros2";
+    glim-ros2-src.flake = false;
   };
-  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src, ros2-v4l2-camera-src }:
+  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src, ros2-v4l2-camera-src, nebs-packages, glim-ros2-src, ...}:
     nix-ros-overlay.inputs.flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ouster-ros-override-overlay ];
+          overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ouster-ros-override-overlay nebs-packages.overlays.default ];
         };
         test_pkg = (with pkgs.rosPackages.jazzy; buildEnv {
               paths = [
@@ -72,6 +75,7 @@
             propagatedBuildInputs = prev.propagatedBuildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
               # buildInputs = prev.buildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
             });
+          glim-ros2 = final.callPackage ./glim-ros2.nix {src = glim-ros2-src; };
           lidar-bike-components = final.callPackage ./default.nix { };
           # libuvc-cam = final.callPackage ./libuvc_cam.nix { src = libuvc-cam-src; };
         };
@@ -106,6 +110,7 @@
                 nmea-navsat-driver
                 foxglove-bridge
                 v4l2-camera
+                glim-ros2
               ];
             })
           ];
