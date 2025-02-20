@@ -187,11 +187,11 @@
     "glim-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1739868280,
-        "narHash": "sha256-etRpT4M96HuyMt60vLFQHRCwxH6G7mcwE2MVBgIngXo=",
+        "lastModified": 1740059717,
+        "narHash": "sha256-N/Q1nIwv6y6W0tGjVE9hXmVT1mcm+WRpOH559VGa8Hc=",
         "owner": "RCMast3r",
         "repo": "glim",
-        "rev": "e89659c0c967d7ecd938b9a9dfe0407e5bc17e6e",
+        "rev": "37f0e6cf54d880b08f0643cc66e23ab1da76328b",
         "type": "github"
       },
       "original": {
@@ -203,11 +203,11 @@
     "gtsam-points-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1739867676,
-        "narHash": "sha256-f97r/rtwi7l+pf273rjRcfA/GaHs3+Sqbci8Z7+PJ1s=",
+        "lastModified": 1740060224,
+        "narHash": "sha256-fKGfmrNiJnpHErBye5rYYntrkCi/1Vu9R1SY8Q31iWk=",
         "owner": "RCMast3r",
         "repo": "gtsam_points",
-        "rev": "127c2959592e697a38a29139443db14fbf02cdfe",
+        "rev": "a6b03b29925a53e9df12ba0f8d91eaeaef74edc4",
         "type": "github"
       },
       "original": {
@@ -277,7 +277,9 @@
         "foxglove-ws-protocol-src": "foxglove-ws-protocol-src",
         "glim-ros2-src": "glim-ros2-src_2",
         "glim-src": "glim-src",
-        "gtsam-points-src": "gtsam-points-src",
+        "gtsam-points-src": [
+          "gtsam-points-src"
+        ],
         "gtsam-src": "gtsam-src",
         "libsocketcanpp-src": "libsocketcanpp-src",
         "nix-proto": "nix-proto",
@@ -285,11 +287,11 @@
         "soem-src": "soem-src"
       },
       "locked": {
-        "lastModified": 1739868602,
-        "narHash": "sha256-oNxgNdtltjAdtw5/mmJ4aTAFLuEwDh1X1EL+BGLX+FA=",
+        "lastModified": 1740060207,
+        "narHash": "sha256-VXZhU9CnTCnQh1SmbituUSIuoT8nnCRxDa2Lps4ii7E=",
         "owner": "RCMast3r",
         "repo": "nebs_packages",
-        "rev": "28501fa81f3effe388a872a2cf66c47b5b53d0fc",
+        "rev": "5e6051e167325ee43080051f44880924f55dbb1f",
         "type": "github"
       },
       "original": {
@@ -447,6 +449,7 @@
     "root": {
       "inputs": {
         "glim-ros2-src": "glim-ros2-src",
+        "gtsam-points-src": "gtsam-points-src",
         "libuvc-cam-src": "libuvc-cam-src",
         "nebs-packages": "nebs-packages",
         "nix-ros-overlay": "nix-ros-overlay",

@@ -12,7 +12,15 @@
     # ros2-v4l2-camera-src.url = "https://gitlab.com/muzhyk.belarus/ros2_v4l2_camera.git";
     ros2-v4l2-camera-src.url = "gitlab:rcmast3r1/ros2_v4l2_camera/compressed_formats";
     ros2-v4l2-camera-src.flake = false;
+    
+    gtsam-points-src = {
+      url = "github:RCMast3r/gtsam_points";
+      flake = false;
+    };
     nebs-packages.url = "github:RCMast3r/nebs_packages"; # packages for glim-ros2
+    nebs-packages.inputs.gtsam-points-src.follows = "gtsam-points-src";
+
+    
     glim-ros2-src.url = "github:koide3/glim_ros2";
     glim-ros2-src.flake = false;
   };
@@ -103,13 +111,13 @@
                 ouster-ros
                 rmw-cyclonedds-cpp
                 ublox
-                lidar-bike-components
                 ament-cmake
                 ament-cmake-core
                 ament-cmake-ros
                 nmea-navsat-driver
                 foxglove-bridge
                 v4l2-camera
+                # lidar-bike-components
                 glim-ros2
               ];
             })
