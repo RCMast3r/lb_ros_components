@@ -34,7 +34,7 @@ private:
     void handle_stop();
     
     std::thread http_thread_;
-    std::atomic<bool> _writing{false};
+    std::atomic<bool> _writing{true};
     std::atomic<bool> server_running_{true};
 
 private:

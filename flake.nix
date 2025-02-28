@@ -17,11 +17,12 @@
       url = "github:RCMast3r/gtsam_points";
       flake = false;
     };
+    
     nebs-packages.url = "github:RCMast3r/nebs_packages"; # packages for glim-ros2
     nebs-packages.inputs.gtsam-points-src.follows = "gtsam-points-src";
 
     
-    glim-ros2-src.url = "github:koide3/glim_ros2";
+    glim-ros2-src.url = "github:RCMast3r/glim_ros2";
     glim-ros2-src.flake = false;
   };
   outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src, ros2-v4l2-camera-src, nebs-packages, glim-ros2-src, ...}:
@@ -67,12 +68,6 @@
             };
           });
           
-            # v4l2-camera = prev.v4l2-camera.overrideAttrs (prev: {
-            #   src = ros2-v4l2-camera-src;
-            #   propagatedBuildInputs = prev.propagatedBuildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
-            #   buildInputs = prev.buildInputs ++ [ pkgs.rosPackages.jazzy.cv-bridge ];
-            # });
-          
         };
         ouster-ros-override-overlay = final: prev: {
           rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope devshell_overlay; };
@@ -117,8 +112,8 @@
                 nmea-navsat-driver
                 foxglove-bridge
                 v4l2-camera
-                # lidar-bike-components
-                glim-ros2
+                lidar-bike-components
+                # glim-ros2
               ];
             })
           ];
@@ -130,6 +125,7 @@
             inherit system;
             overlays = [
               nix-ros-overlay.overlays.default
+              nebs-packages.overlays.default
               my-ros-overlay
             ];
           };

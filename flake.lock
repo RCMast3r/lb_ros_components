@@ -155,15 +155,15 @@
     "glim-ros2-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1739507942,
-        "narHash": "sha256-VI8oaJNS265CVD5xqxVAL0ofbM96rkylIMyqZxSp2FY=",
-        "owner": "koide3",
+        "lastModified": 1740142381,
+        "narHash": "sha256-0aRfHVO4hYIsowhUK061RVHFGu5YTv/4fkNg2qMCsiA=",
+        "owner": "RCMast3r",
         "repo": "glim_ros2",
-        "rev": "3d74aaff264c4482f0ee9e152ebcf25299e14d75",
+        "rev": "3354a04676a7351ab2bfee36c0f688106a292302",
         "type": "github"
       },
       "original": {
-        "owner": "koide3",
+        "owner": "RCMast3r",
         "repo": "glim_ros2",
         "type": "github"
       }

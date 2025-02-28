@@ -58,9 +58,8 @@ mcap_boi:
 mcap_recorder:
   ros__parameters:
     topic: /points
+    output_base: /home/ben/lidar_bike_ros_components
 
 v4l2_camera:
   ros__parameters:
-    video_device: "/dev/video1"
     image_size: [1920, 1080]
-    pixel_format: "MJPG"

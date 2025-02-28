@@ -3,6 +3,8 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <string>
 
+#include <iostream>
+
 mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & options) : rclcpp::Node("mcap_recorder", options)
 {
     // Declare parameters
@@ -10,7 +12,7 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
     this->declare_parameter<std::string>("imu_topic", "/imu");
     this->declare_parameter<std::string>("image_topic", "/image_raw");
     // this->declare_parameter<std::string>("output_base", "/media/data");
-    this->declare_parameter<std::string>("output_base", "/home/ben/");
+    this->declare_parameter<std::string>("output_base", "/home/ben/lidar_bike_ros_components");
 
     // Get parameters
     _pointcloud_topic = this->get_parameter("pointcloud_topic").as_string();
@@ -102,43 +104,40 @@ void mcap_writer_component::MCAPRecorder::start_http_server()
     httplib::Server svr;
 
     // Serve the webpage with Start/Stop buttons
-    svr.Get("/", [](const httplib::Request &, httplib::Response &res) {
-        std::string html = R"(
+    svr.Get("/", [](const httplib::Request&, httplib::Response& res) {
+        res.set_content(R"(
             <!DOCTYPE html>
             <html>
             <head>
-                <title>MCAP Recorder</title>
-                <style>
-                    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                    button { font-size: 20px; padding: 10px 20px; margin: 10px; }
-                </style>
+                <title>Recording Control</title>
                 <script>
-                    function sendCommand(command) {
-                        fetch(command)
-                            .then(response => response.text())
-                            .then(data => document.getElementById('status').innerText = data);
+                    function sendRequest(action) {
+                        fetch('/' + action, { method: 'GET' })
+                        .then(response => response.text())
+                        .then(data => document.getElementById('status').innerText = data);
                     }
                 </script>
             </head>
             <body>
-                <h1>MCAP Recorder</h1>
-                <button onclick='sendCommand('/start')'>Start Recording</button>
-                <button onclick='sendCommand('/stop')'>Stop Recording</button>
-                <p id="status">Status: Idle</p>
+                <h1>Recording Control</h1>
+                <button onclick='sendRequest("start")'>Start Recording</button>
+                <button onclick='sendRequest("stop")'>Stop Recording</button>
+                <p id='status'>Status: Idle</p>
             </body>
             </html>
-        )";
-        res.set_content(html, "text/html");
+        )", "text/html");
     });
     
     // Start recording
     svr.Get("/start", [this](const httplib::Request &, httplib::Response &res) {
         handle_start();
+        std::cout << "got start" <<std::endl;
         res.set_content("Recording started", "text/plain");
     });
 
     // Stop recording
     svr.Get("/stop", [this](const httplib::Request &, httplib::Response &res) {
+        std::cout << "got stop" <<std::endl;
         handle_stop();
         res.set_content("Recording stopped", "text/plain");
     });
@@ -169,21 +168,18 @@ void mcap_writer_component::MCAPRecorder::handle_stop()
     if (_writing)
     {
         _writing = false;
-        
+        writer_->close();
         RCLCPP_DEBUG(this->get_logger(), "Stopped recording.");
     }
 }
-
-
-
 
 mcap_writer_component::MCAPRecorder::~MCAPRecorder()
 {
     // Ensure rosbag2 writer cleanup
     if (writer_)
     {
-        writer_.reset();
         writer_->close();
+        writer_.reset();
     }
     server_running_ = false;
     if (http_thread_.joinable())
