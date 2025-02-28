@@ -51,14 +51,10 @@ driver:
     #
     proc_mask: PCL|IMU|RAW
 
-mcap_boi:
+mcap_writer_component:
   ros__parameters:
     topic: /points
-
-mcap_recorder:
-  ros__parameters:
-    topic: /points
-    output_base: /home/ben/lidar_bike_ros_components
+    output_base: /home/ben/lidar_bike_ros_components/test
 
 v4l2_camera:
   ros__parameters:

@@ -122,7 +122,7 @@ void mcap_writer_component::MCAPRecorder::start_http_server()
                 <h1>Recording Control</h1>
                 <button onclick='sendRequest("start")'>Start Recording</button>
                 <button onclick='sendRequest("stop")'>Stop Recording</button>
-                <p id='status'>Status: Idle</p>
+                <p id='status'>Status: Recording</p>
             </body>
             </html>
         )", "text/html");

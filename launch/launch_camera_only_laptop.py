@@ -24,7 +24,7 @@ def generate_launch_description():
                 ComposableNode(
                     package='mcap_writer_component',
                     plugin='mcap_writer_component::MCAPRecorder',
-                    name='mcap_boi',
+                    name='mcap_writer_component',
                     parameters=[config]),
                     # extra_arguments=[{'use_intra_process_comms': True}]),
                 ComposableNode(
