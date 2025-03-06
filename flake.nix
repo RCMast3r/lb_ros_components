@@ -99,7 +99,12 @@
             eval "$(register-python-argcomplete colcon)"
             export GLIM_PATH=${pkgs.glim}
             export GLIM_ROS_PATH=${pkgs.rosPackages.jazzy.glim-ros2}
+            sudo sysctl -w net.core.rmem_max=2147483647
           '';
+          RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp";
+          ROS_AUTOMATIC_DISCOVERY_RANGE="LOCALHOST";
+          RMW_CONNEXT_PUBLICATION_MODE="ASYNCHRONOUS";
+          CYCLONEDDS_URI="file://config/ddsconfig.xml";
           packages = [
             pkgs.colcon
             (with pkgs.rosPackages.jazzy; buildEnv {
