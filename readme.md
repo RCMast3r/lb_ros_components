@@ -20,3 +20,8 @@ configure:
 start:
 `ros2 lifecycle set driver activate`
 
+## working with pointclouds
+
+`ros2 run pcl_ros pointcloud_to_pcd`
+
+`ros2 bag play --start-offset 430 --remap /points:=input`

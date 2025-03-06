@@ -93,6 +93,11 @@
         overlays = my-ros-overlay;
         devShells.default = pkgs.mkShell {
           name = "lidar-bike-env";
+          # auto-completion yeet
+          shellHook = ''
+            eval "$(register-python-argcomplete ros2)"
+            eval "$(register-python-argcomplete colcon)"
+          '';
           packages = [
             pkgs.colcon
             (with pkgs.rosPackages.jazzy; buildEnv {
@@ -113,9 +118,11 @@
                 foxglove-bridge
                 v4l2-camera
                 lidar-bike-components
+                pcl-ros
                 # glim-ros2
               ];
             })
+            
           ];
         };
 
