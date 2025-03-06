@@ -97,6 +97,8 @@
           shellHook = ''
             eval "$(register-python-argcomplete ros2)"
             eval "$(register-python-argcomplete colcon)"
+            export GLIM_PATH=${pkgs.glim}
+            export GLIM_ROS_PATH=${pkgs.rosPackages.jazzy.glim-ros2}
           '';
           packages = [
             pkgs.colcon
@@ -119,7 +121,7 @@
                 v4l2-camera
                 lidar-bike-components
                 pcl-ros
-                # glim-ros2
+                glim-ros2
               ];
             })
             
