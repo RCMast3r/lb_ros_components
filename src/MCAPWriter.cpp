@@ -11,8 +11,8 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
     this->declare_parameter<std::string>("pointcloud_topic", "/points");
     this->declare_parameter<std::string>("imu_topic", "/imu");
     this->declare_parameter<std::string>("image_topic", "/image_raw");
-    // this->declare_parameter<std::string>("output_base", "/media/data");
-    this->declare_parameter<std::string>("output_base", "/home/ben/lidar_bike_ros_components");
+    this->declare_parameter<std::string>("output_base", "/media/data");
+    // this->declare_parameter<std::string>("output_base", "/home/ben/lidar_bike_ros_components");
 
     // Get parameters
     _pointcloud_topic = this->get_parameter("pointcloud_topic").as_string();
