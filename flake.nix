@@ -24,13 +24,14 @@
     
     glim-ros2-src.url = "github:RCMast3r/glim_ros2";
     glim-ros2-src.flake = false;
+    nixgl.url = "github:nix-community/nixGL";
   };
-  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src, ros2-v4l2-camera-src, nebs-packages, glim-ros2-src, ...}:
+  outputs = { self, nix-ros-overlay, nixpkgs, libuvc-cam-src, ros2-v4l2-camera-src, nebs-packages, glim-ros2-src, nixgl, ...}:
     nix-ros-overlay.inputs.flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
           inherit system;
-          overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ouster-ros-override-overlay nebs-packages.overlays.default ];
+          overlays = [ nix-ros-overlay.overlays.default my-ros-overlay ouster-ros-override-overlay nebs-packages.overlays.default nixgl.overlay ];
         };
         test_pkg = (with pkgs.rosPackages.jazzy; buildEnv {
               paths = [
@@ -99,11 +100,19 @@
             eval "$(register-python-argcomplete colcon)"
             export GLIM_PATH=${pkgs.glim}
             export GLIM_ROS_PATH=${pkgs.rosPackages.jazzy.glim-ros2}
+            sudo sysctl -w net.core.rmem_max=2147483647
           '';
+          RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp";
+          ROS_AUTOMATIC_DISCOVERY_RANGE="LOCALHOST";
+          RMW_CONNEXT_PUBLICATION_MODE="ASYNCHRONOUS";
+          CYCLONEDDS_URI="file://config/ddsconfig.xml";
+          NIXPKGS_ALLOW_UNFREE=1;
           packages = [
             pkgs.colcon
+            pkgs.nixgl.auto.nixGLDefault
             (with pkgs.rosPackages.jazzy; buildEnv {
               paths = [
+                rviz2
                 ros-core
                 ros-base
                 rclcpp-components

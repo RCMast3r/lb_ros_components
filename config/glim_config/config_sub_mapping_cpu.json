@@ -4,7 +4,7 @@
   */
   "sub_mapping": {
     "so_name": "/nix/store/wwwcxdy3s3pbm2np7xb42dn27sam7mr3-glim-1.0.7-dev/lib/libsub_mapping.so",
-    "enable_imu": true,
+    "enable_imu": false,
     "enable_optimization": false,
     // Keyframe update strategy
     "max_num_keyframes": 15,
