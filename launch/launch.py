@@ -37,7 +37,8 @@ def generate_launch_description():
                 ComposableNode(
                     package='v4l2_camera',
                     plugin='v4l2_camera::V4L2Camera',
-                    name='v4l2_camera')
+                    name='v4l2_camera',
+                    parameters=[config])
             ],
             output='both',
     )
