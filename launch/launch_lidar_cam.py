@@ -12,7 +12,7 @@ def generate_launch_description():
     config = os.path.join(
       get_package_share_directory('mcap_writer_component'),
       'config',
-      'config.yaml'
+      'config_local.yaml'
       )
     
     container = ComposableNodeContainer(    
@@ -21,11 +21,11 @@ def generate_launch_description():
             package='rclcpp_components',
             executable='component_container',
             composable_node_descriptions=[
-                ComposableNode(
-                    package='mcap_writer_component',
-                    plugin='mcap_writer_component::MCAPRecorder',
-                    name='mcap_boi',
-                    parameters=[config]),
+                # ComposableNode(
+                #     package='mcap_writer_component',
+                #     plugin='mcap_writer_component::MCAPRecorder',
+                #     name='mcap_boi',
+                #     parameters=[config]),
                     # extra_arguments=[{'use_intra_process_comms': True}]),
                     
                 ComposableNode(
@@ -38,11 +38,6 @@ def generate_launch_description():
                     package='v4l2_camera',
                     plugin='v4l2_camera::V4L2Camera',
                     name='v4l2_camera',
-                    parameters=[config]),
-                ComposableNode(
-                    package='ublox_gps',
-                    plugin='ublox_node::UbloxNode',
-                    name='ublox_node',
                     parameters=[config])
             ],
             output='both',

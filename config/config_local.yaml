@@ -1,7 +1,7 @@
 driver:
   ros__parameters:
     lidar_ip: 169.254.87.155
-    computer_ip: 169.254.3.5
+    computer_ip: 169.254.3.69
     lidar_mode: "512x20"
     imu_port: 7503
     lidar_port: 7502
@@ -51,14 +51,16 @@ driver:
     #
     proc_mask: PCL|IMU|RAW
 
-mcap_writer_component:
+mcap_boi:
   ros__parameters:
     topic: /points
-    # output_base: /home/ben/lidar_bike_ros_components/test
+    output_base: /home/ben/lidar_bike_ros_components/test
+
 
 v4l2_camera:
   ros__parameters:
     image_size: [1920, 1080]
+
 ublox_gps:
   ros__parameters:
     debug: 0                    # Range 0-4 (0 means no debug statements will print)
