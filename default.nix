@@ -1,11 +1,11 @@
-{ buildRosPackage, ament-cmake, rclcpp, rclcpp-components, sensor-msgs, ament-cmake-ros, ament-lint-auto, ament-lint-common, ros-environment, ouster-ros, rosbag2-cpp, launch-ros, v4l2-camera, httplib }:
+{ buildRosPackage, ament-cmake, rclcpp, rclcpp-components, sensor-msgs, ament-cmake-ros, ament-lint-auto, ament-lint-common, ros-environment, ouster-ros, rosbag2-cpp, launch-ros, v4l2-camera, httplib, pcl, perception-pcl}:
 buildRosPackage {
   pname = "lidar-bike-components";
   version = "0.0.1a";
   src = ./.;
 
   buildType = "ament_cmake";
-  propagatedBuildInputs = [ ament-cmake-ros rclcpp sensor-msgs rclcpp-components ament-cmake ros-environment ouster-ros rosbag2-cpp launch-ros v4l2-camera httplib];
+  propagatedBuildInputs = [ ament-cmake-ros rclcpp sensor-msgs rclcpp-components ament-cmake ros-environment ouster-ros rosbag2-cpp launch-ros v4l2-camera httplib pcl perception-pcl];
   checkInputs = [ ament-lint-auto ament-lint-common ];
   nativeBuildInputs = [ ament-cmake-ros ament-cmake ];
 

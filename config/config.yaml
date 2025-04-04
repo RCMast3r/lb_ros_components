@@ -2,7 +2,7 @@ driver:
   ros__parameters:
     lidar_ip: 169.254.87.155
     computer_ip: 169.254.3.5
-    lidar_mode: "512x20"
+    lidar_mode: "512x10"
     imu_port: 7503
     lidar_port: 7502
     sensor_frame: laser_sensor_frame
