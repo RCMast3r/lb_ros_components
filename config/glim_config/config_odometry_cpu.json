@@ -13,10 +13,10 @@
     "init_pose_damping_scale": 1e10,
     // Optimizer params
     "smoother_lag": 5.0,
-    "use_isam2_dogleg": true,
+    "use_isam2_dogleg": false,
     "isam2_relinearize_skip": 1,
     "isam2_relinearize_thresh": 0.1,
-    "fix_imu_bias": true,
+    "fix_imu_bias": false,
     // Registration settings
     "registration_type": "GICP",
     "max_iterations": 8,
