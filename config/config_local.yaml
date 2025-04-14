@@ -1,8 +1,8 @@
 driver:
   ros__parameters:
     lidar_ip: 169.254.87.155
-    computer_ip: 169.254.3.5
-    lidar_mode: "512x10"
+    computer_ip: 169.254.3.69
+    lidar_mode: "512x20"
     imu_port: 7503
     lidar_port: 7502
     sensor_frame: laser_sensor_frame
@@ -51,14 +51,44 @@ driver:
     #
     proc_mask: PCL|IMU|RAW
 
-mcap_writer_component:
+mcap_boi:
   ros__parameters:
     topic: /points
-    # output_base: /home/ben/lidar_bike_ros_components/test
+    output_base: /home/ben/lidar_bike_ros_components/test
+
 
 v4l2_camera:
   ros__parameters:
     image_size: [1920, 1080]
+
+ublox_gps:
+  ros__parameters:
+    debug: 0                    # Range 0-4 (0 means no debug statements will print)
+    device: /dev/ttyACM0
+    frame_id: gps
+    rate: 10.0
+    nav_rate: 10
+    uart1:
+      baudrate: 115200
+    # TMODE3 Config
+    TMODE3: 1                   # Survey-In Mode
+    sv_in:
+      reset: True               # True: disables and re-enables survey-in (resets)
+                                # False: Disables survey-in only if TMODE3 is
+                                # disabled
+      min_dur: 300              # Survey-In Minimum Duration [s]
+      acc_lim: 3.0              # Survey-In Accuracy Limit [m]
+
+    inf:
+      all: true                   # Whether to display all INF messages in console
+    
+    publish:
+      all: true
+      aid:
+        hui: false
+      nav:
+        posecef: false
+
 
 ublox_node:
   ros__parameters:

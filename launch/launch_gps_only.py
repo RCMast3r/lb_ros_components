@@ -9,10 +9,16 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     """Generate launch description with multiple components."""
 
+    # config = os.path.join(
+    #   get_package_share_directory('mcap_writer_component'),
+    #   'config',
+    #   'config_local.yaml'
+    #   )
+    
     config = os.path.join(
-      get_package_share_directory('mcap_writer_component'),
+    #   get_package_share_directory('mcap_writer_component'),
       'config',
-      'config.yaml'
+      'config_local.yaml'
       )
     
     container = ComposableNodeContainer(    
@@ -28,17 +34,17 @@ def generate_launch_description():
                     parameters=[config]),
                     # extra_arguments=[{'use_intra_process_comms': True}]),
                     
-                ComposableNode(
-                    package='ouster_ros',
-                    plugin='ouster_ros::OusterDriver',
-                    name='driver',
-                    # extra_arguments=[{'use_intra_process_comms': True}],
-                    parameters=[config]),
-                ComposableNode(
-                    package='v4l2_camera',
-                    plugin='v4l2_camera::V4L2Camera',
-                    name='v4l2_camera',
-                    parameters=[config]),
+                # ComposableNode(
+                #     package='ouster_ros',
+                #     plugin='ouster_ros::OusterDriver',
+                #     name='driver',
+                #     # extra_arguments=[{'use_intra_process_comms': True}],
+                #     parameters=[config]),
+                # ComposableNode(
+                #     package='v4l2_camera',
+                #     plugin='v4l2_camera::V4L2Camera',
+                #     name='v4l2_camera',
+                #     parameters=[config])
                 ComposableNode(
                     package='ublox_gps',
                     plugin='ublox_node::UbloxNode',

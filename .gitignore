@@ -5,3 +5,4 @@ result
 lb_rosbag*/
 rosbag*
 *metadata.json
+launch/__pycache__/
