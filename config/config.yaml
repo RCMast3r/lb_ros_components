@@ -12,7 +12,7 @@ driver:
     # if False, data are published with sensor data QoS. This is preferrable
     # for production but default QoS is needed for rosbag.
     # See: https://github.com/ros2/rosbag2/issues/125
-    use_system_default_qos: False
+    use_system_default_qos: True
 
     # Set the method used to timestamp measurements.
     # Valid modes are:
@@ -25,7 +25,7 @@ driver:
     # (See this project's README and/or the Ouster Software Guide for more
     # information).
     #
-    timestamp_mode: TIME_FROM_INTERNAL_OSC
+    timestamp_mode: TIME_FROM_ROS_TIME
 
     # Mask-like-string used to define the data processors that should be
     # activated upon startup of the driver. This will determine the topics

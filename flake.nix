@@ -84,6 +84,8 @@
           # libuvc-cam = final.callPackage ./libuvc_cam.nix { src = libuvc-cam-src; };
         };
 
+        
+
         my-ros-overlay = final: prev: {
           rosPackages = prev.rosPackages // { jazzy = prev.rosPackages.jazzy.overrideScope my_overlay; };
         };
@@ -131,6 +133,48 @@
                 lidar-bike-components
                 pcl-ros
                 glim-ros2
+              ];
+            })
+            
+          ];
+        };
+
+        devShells.humble = pkgs.mkShell {
+          name = "lidar-bike-env";
+          # auto-completion yeet
+          shellHook = ''
+            eval "$(register-python-argcomplete ros2)"
+            eval "$(register-python-argcomplete colcon)"
+            sudo sysctl -w net.core.rmem_max=2147483647
+          '';
+          RMW_IMPLEMENTATION = "rmw_cyclonedds_cpp";
+          ROS_AUTOMATIC_DISCOVERY_RANGE="LOCALHOST";
+          RMW_CONNEXT_PUBLICATION_MODE="ASYNCHRONOUS";
+          CYCLONEDDS_URI="file://config/ddsconfig.xml";
+          NIXPKGS_ALLOW_UNFREE=1;
+          packages = [
+            pkgs.colcon
+            pkgs.nixgl.auto.nixGLDefault
+            (with pkgs.rosPackages.humble; buildEnv {
+              paths = [
+                rviz2
+                ros-core
+                ros-base
+                rclcpp-components
+                sensor-msgs
+                ouster-ros
+                rosbag2-storage-mcap
+                ouster-ros
+                rmw-cyclonedds-cpp
+                ublox
+                ament-cmake
+                ament-cmake-core
+                ament-cmake-ros
+                nmea-navsat-driver
+                foxglove-bridge
+                v4l2-camera
+                lidar-bike-components
+                pcl-ros
               ];
             })
             
