@@ -4,8 +4,8 @@
   */
   "global_mapping": {
     "so_name": "/nix/store/wwwcxdy3s3pbm2np7xb42dn27sam7mr3-glim-1.0.7-dev/lib/libglobal_mapping.so",
-    "enable_imu": true,
-    "enable_optimization": true,
+    "enable_imu": false,
+    "enable_optimization": false,
     "init_pose_damping_scale": 1e10,
     // Relative pose factors
     "create_between_factors": true,
