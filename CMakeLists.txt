@@ -20,7 +20,7 @@ set_target_properties(lidar_bike_components PROPERTIES CXX_STANDARD 20)
 set_target_properties(lidar_bike_calibration PROPERTIES CXX_STANDARD 20)
 
 ament_target_dependencies(lidar_bike_components PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge)
-ament_target_dependencies(lidar_bike_calibration  PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge)
+ament_target_dependencies(lidar_bike_calibration PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge)
 
 target_link_libraries(lidar_bike_components PUBLIC httplib::httplib)
 
@@ -40,7 +40,7 @@ rclcpp_components_register_node(lidar_bike_components
   EXECUTABLE mcap_recorder
 )
 
-rclcpp_components_register_node(lidar_bike_components
+rclcpp_components_register_node(lidar_bike_calibration
   PLUGIN "lidar_bike_calibration::CalibNode"
   EXECUTABLE calib_node
 )
