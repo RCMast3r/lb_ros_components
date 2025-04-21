@@ -68,6 +68,6 @@ private:
 }
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(mcap_writer_component::MCAPRecorder)
+RCLCPP_COMPONENTS_REGISTER_NODE(lidar_bike_components::MCAPRecorder)
 
 #endif // __MCAPWRITER_H__
