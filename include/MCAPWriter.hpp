@@ -25,7 +25,7 @@
 #include <rosbag2_storage/storage_options.hpp>
 
 
-namespace mcap_writer_component {
+namespace lidar_bike_components {
 
 class MCAPRecorder : public rclcpp::Node
 {

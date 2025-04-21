@@ -51,7 +51,7 @@ driver:
     #
     proc_mask: PCL|IMU|RAW
 
-mcap_writer_component:
+MCAPRecorderComponent:
   ros__parameters:
     topic: /points
     # output_base: /home/ben/lidar_bike_ros_components/test

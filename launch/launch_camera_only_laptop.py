@@ -10,7 +10,7 @@ def generate_launch_description():
     """Generate launch description with multiple components."""
 
     config = os.path.join(
-      get_package_share_directory('mcap_writer_component'),
+      get_package_share_directory('lidar_bike_components'),
       'config',
       'config.yaml'
       )
@@ -22,9 +22,14 @@ def generate_launch_description():
             executable='component_container',
             composable_node_descriptions=[
                 ComposableNode(
-                    package='mcap_writer_component',
-                    plugin='mcap_writer_component::MCAPRecorder',
-                    name='mcap_writer_component',
+                    package='lidar_bike_components',
+                    plugin='lidar_bike_components::MCAPRecorder',
+                    name='MCAPRecorderComponent',
+                    parameters=[config]),
+                ComposableNode(
+                    package='lidar_bike_components',
+                    plugin='lidar_bike_components::CalibNode',
+                    name='CalibNodeComponent',
                     parameters=[config]),
                     # extra_arguments=[{'use_intra_process_comms': True}]),
                 ComposableNode(

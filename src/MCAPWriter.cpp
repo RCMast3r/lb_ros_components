@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & options) : rclcpp::Node("mcap_recorder", options)
+lidar_bike_components::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & options) : rclcpp::Node("mcap_recorder", options)
 {
     // Declare parameters
     this->declare_parameter<std::string>("pointcloud_topic", "/points");
@@ -76,7 +76,7 @@ mcap_writer_component::MCAPRecorder::MCAPRecorder(const rclcpp::NodeOptions & op
 
 }
 
-void mcap_writer_component::MCAPRecorder::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
+void lidar_bike_components::MCAPRecorder::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
     if(_writing)
     {
@@ -86,7 +86,7 @@ void mcap_writer_component::MCAPRecorder::pointcloud_callback(const sensor_msgs:
     
 }
 
-void mcap_writer_component::MCAPRecorder::imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
+void lidar_bike_components::MCAPRecorder::imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
 {
     
     if(_writing)
@@ -97,7 +97,7 @@ void mcap_writer_component::MCAPRecorder::imu_callback(const sensor_msgs::msg::I
     
 }
 
-void mcap_writer_component::MCAPRecorder::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
+void lidar_bike_components::MCAPRecorder::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
     if(_writing)
     {
@@ -107,7 +107,7 @@ void mcap_writer_component::MCAPRecorder::image_callback(const sensor_msgs::msg:
     
 }
 
-void mcap_writer_component::MCAPRecorder::gps_callback(const sensor_msgs::msg::NavSatFix::SharedPtr msg)
+void lidar_bike_components::MCAPRecorder::gps_callback(const sensor_msgs::msg::NavSatFix::SharedPtr msg)
 {
     if(_writing)
     {
@@ -116,7 +116,7 @@ void mcap_writer_component::MCAPRecorder::gps_callback(const sensor_msgs::msg::N
     }
 }
 
-void mcap_writer_component::MCAPRecorder::start_http_server()
+void lidar_bike_components::MCAPRecorder::start_http_server()
 {
     httplib::Server svr;
 
@@ -166,7 +166,7 @@ void mcap_writer_component::MCAPRecorder::start_http_server()
     svr.listen("0.0.0.0", 8080);
 }
 
-void mcap_writer_component::MCAPRecorder::handle_start()
+void lidar_bike_components::MCAPRecorder::handle_start()
 {
     if (!_writing)
     {
@@ -183,7 +183,7 @@ void mcap_writer_component::MCAPRecorder::handle_start()
     }
 }
 
-void mcap_writer_component::MCAPRecorder::handle_stop()
+void lidar_bike_components::MCAPRecorder::handle_stop()
 {
     if (_writing)
     {
@@ -193,7 +193,7 @@ void mcap_writer_component::MCAPRecorder::handle_stop()
     }
 }
 
-mcap_writer_component::MCAPRecorder::~MCAPRecorder()
+lidar_bike_components::MCAPRecorder::~MCAPRecorder()
 {
     // Ensure rosbag2 writer cleanup
     if (writer_)

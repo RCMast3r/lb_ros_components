@@ -1,36 +1,39 @@
 cmake_minimum_required(VERSION 3.12)
-project(mcap_writer_component)
+project(lidar_bike_components)
 
+# ROS deps
 find_package(rclcpp_components REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(rosbag2_cpp REQUIRED)
+find_package(message_filters REQUIRED)
+
+# non-ROS deps
 find_package(httplib REQUIRED)
+find_package(ftxui REQUIRED)
+
 find_package(PCL COMPONENTS common REQUIRED)
 
 # https://docs.ros.org/en/jazzy/Tutorials/Advanced/Recording-A-Bag-From-Your-Own-Node-CPP.html
-add_library(mcap_writer_component SHARED src/MCAPWriter.cpp)
-set_target_properties(mcap_writer_component PROPERTIES CXX_STANDARD 20)
+add_library(lidar_bike_components SHARED src/MCAPWriter.cpp)
+set_target_properties(lidar_bike_components PROPERTIES CXX_STANDARD 20)
 
-ament_target_dependencies(mcap_writer_component PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components)
+ament_target_dependencies(lidar_bike_components PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters)
 
-target_link_libraries(mcap_writer_component PUBLIC httplib::httplib)
+target_link_libraries(lidar_bike_components PUBLIC httplib::httplib)
 
-target_include_directories(mcap_writer_component PUBLIC 
+target_include_directories(lidar_bike_components PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
 )
 
-# rclcpp_components_register_node(mcap_writer_component "MCAPRecorder::mcap_boi")
-
-rclcpp_components_register_node(mcap_writer_component
-  PLUGIN "mcap_writer_component::MCAPRecorder"
+rclcpp_components_register_node(lidar_bike_components
+  PLUGIN "lidar_bike_components::MCAPRecorder"
   EXECUTABLE mcap_recorder
 )
 
-
-install(TARGETS mcap_writer_component
-        EXPORT export_mcap_writer_component
+install(TARGETS lidar_bike_components
+        EXPORT export_lidar_bike_components
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin
@@ -52,5 +55,5 @@ install(
 
 ament_export_include_directories(include) 
 ament_export_dependencies(rosidl_default_runtime)
-ament_export_targets(export_mcap_writer_component)
+ament_export_targets(export_lidar_bike_components)
 ament_package()

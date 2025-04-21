@@ -11,7 +11,7 @@ https://docs.ros.org/en/jazzy/p/rosbag2_storage/
 
 ### shell 1:
 start:
-`ros2 launch mcap_writer_component launch.py`
+`ros2 launch lidar_bike_components launch.py`
 
 ### shell 2:
 configure:
