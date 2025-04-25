@@ -45,8 +45,15 @@ rclcpp_components_register_node(lidar_bike_calibration
   EXECUTABLE calib_node
 )
 
-install(TARGETS lidar_bike_components lidar_bike_calibration
+install(TARGETS lidar_bike_components
         EXPORT export_lidar_bike_components
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+)
+
+install(TARGETS lidar_bike_calibration
+        EXPORT export_lidar_bike_calibration
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin
@@ -70,4 +77,5 @@ install(
 ament_export_include_directories(include) 
 ament_export_dependencies(rosidl_default_runtime)
 ament_export_targets(export_lidar_bike_components)
+ament_export_targets(export_lidar_bike_calibration)
 ament_package()

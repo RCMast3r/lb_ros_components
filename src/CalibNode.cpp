@@ -5,7 +5,8 @@ lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options
     // Declare "init time" parameters
     this->declare_parameter<std::string>("pointcloud_topic", "/points");
     this->declare_parameter<std::string>("image_topic", "/image_raw");
-    
+    this->declare_parameter<std::vector<double>>("distortion_coefficients", _distortion_params);
+    this->declare_parameter<std::vector<double>>("camera_matrix_row_major", _cam_matrix_params);
     // Initialize the ROS 2 subscriptions
     _subscription_pointcloud = this->create_subscription<sensor_msgs::msg::PointCloud2>(
         this->get_parameter("pointcloud_topic").as_string(), rclcpp::SensorDataQoS(),
