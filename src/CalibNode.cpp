@@ -1,36 +1,51 @@
 #include <CalibNode.hpp>
 
+
 lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options) : rclcpp::Node("calib_node", options)
 {
     // Declare "init time" parameters
     this->declare_parameter<std::string>("pointcloud_topic", "/points");
     this->declare_parameter<std::string>("image_topic", "/image_raw");
+    
     this->declare_parameter<std::vector<double>>("distortion_coefficients", _distortion_params);
     this->declare_parameter<std::vector<double>>("camera_matrix_row_major", _cam_matrix_params);
+    this->declare_parameter<std::vector<double>>("tf_params", _tf_params); // x y z r p y
     // Initialize the ROS 2 subscriptions
     _subscription_pointcloud = this->create_subscription<sensor_msgs::msg::PointCloud2>(
         this->get_parameter("pointcloud_topic").as_string(), rclcpp::SensorDataQoS(),
         std::bind(&CalibNode::pointcloud_callback, this, std::placeholders::_1));
-    
+
     _subscription_image = this->create_subscription<sensor_msgs::msg::Image>(
         this->get_parameter("image_topic").as_string(), rclcpp::QoS(10),
         std::bind(&CalibNode::image_callback, this, std::placeholders::_1));
-    
+
     // Declare "runtime" parameters
     _param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
 
     // camera distortion coefficients (5 parameters)
     this->get_parameter("distortion_coefficients", _distortion_params);
     this->get_parameter("camera_matrix_row_major", _cam_matrix_params);
-
+    this->get_parameter("camera_matrix_row_major", _tf_params);
 
     auto cb = [this](const rclcpp::Parameter & p) {
 
         if(p.get_name() == std::string("distortion_coefficients")) {
             _distortion_params = p.get_value<rclcpp::ParameterType::PARAMETER_DOUBLE_ARRAY>();
+            for(auto param : _distortion_params)
+            {
+                std::cout << param <<std::endl;
+            }
         } else if(p.get_name() == std::string("camera_matrix_row_major"))
         {
             _cam_matrix_params = p.get_value<rclcpp::ParameterType::PARAMETER_DOUBLE_ARRAY>();
+
+            for(auto param : _distortion_params)
+            {
+                std::cout << param <<std::endl;
+            }
+        } else if(p.get_name() == std::string("tf_params"))
+        {
+            _tf_params = p.get_value<rclcpp::ParameterType::PARAMETER_DOUBLE_ARRAY>();
         }
       RCLCPP_INFO(
         this->get_logger(), "cb: Received an update to parameter \"%s\" of type %s",
@@ -43,9 +58,34 @@ lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options
 
 void lidar_bike_calibration::CalibNode::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-
+    
 }
 void lidar_bike_calibration::CalibNode::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
+    auto quat = _quat_from_euler(, double aj, double ak) 
+    Eigen::Quaterniond q(x, y, z, w);  // Note: (x, y, z, w) order
+    Eigen::Vector3d t(tx, ty, tz);
+}
 
+std::array<double, 4> lidar_bike_calibration::CalibNode::_quat_from_euler(double ai, double aj, double ak)
+{
+    std::array<double, 4> quat = {};
+    ai /= 2.0;
+    aj /= 2.0;
+    ak /= 2.0;
+    auto ci = ::cos(ai);
+    auto si = ::sin(ai);
+    auto cj = ::cos(aj);
+    auto sj = ::sin(aj);
+    auto ck = ::cos(ak);
+    auto sk = ::sin(ak);
+    auto cc = ci*ck;
+    auto cs = ci*sk;
+    auto sc = si*ck;
+    auto ss = si*sk;
+    quat[0] = cj*sc - sj*cs;
+    quat[1] = cj*ss + sj*cc;
+    quat[2] = cj*cs - sj*sc;
+    quat[3] = cj*cc + sj*ss;
+    return quat;
 }

@@ -10,7 +10,7 @@ find_package(message_filters REQUIRED)
 find_package(cv_bridge REQUIRED)
 # non-ROS deps
 find_package(httplib REQUIRED)
-
+find_package(Eigen3 REQUIRED)
 find_package(PCL COMPONENTS common REQUIRED)
 
 # https://docs.ros.org/en/jazzy/Tutorials/Advanced/Recording-A-Bag-From-Your-Own-Node-CPP.html
@@ -23,6 +23,8 @@ ament_target_dependencies(lidar_bike_components PUBLIC rosbag2_cpp rclcpp sensor
 ament_target_dependencies(lidar_bike_calibration PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge)
 
 target_link_libraries(lidar_bike_components PUBLIC httplib::httplib)
+
+target_link_libraries(lidar_bike_calibration PUBLIC Eigen3::Eigen)
 
 target_include_directories(lidar_bike_components PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
