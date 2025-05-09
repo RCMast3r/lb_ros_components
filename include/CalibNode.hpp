@@ -31,6 +31,13 @@
 #include <Eigen/Geometry>  // For Quaternion
 #include "opencv2/core/core.hpp"
 
+
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+
+
 namespace lidar_bike_calibration {
 class CalibNode : public rclcpp::Node
 {
@@ -41,12 +48,12 @@ public:
     void image_callback(const sensor_msgs::msg::Image::SharedPtr msg);
     void pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg);
 private:
-    std::array<double, 4> _quat_from_euler(double ai, double aj, double ak);
+    Eigen::Quaterniond _quat_from_euler(double ai, double aj, double ak);
 private:
 
     std::vector<double> _distortion_params = {0,0,0,0,0}; // k1, k2, p1, p2, k3
     std::vector<double> _cam_matrix_params = {0,0,0,0,0, 0, 0, 0, 0}; // 3x3 row major fx, 0, cx, 0, fy, cy, 0,0,1
-    std::vector<double> _tf_params = {0,0,0,0,0,0};
+    std::vector<double> _tf_params = {0,0,0,0,0,0}; // x y z r p y
 
     std::shared_ptr<rclcpp::ParameterEventHandler> _param_subscriber;
 
@@ -56,6 +63,7 @@ private:
 
     std::shared_ptr<rclcpp::ParameterCallbackHandle> _cb_handle;
     std::shared_ptr<rclcpp::ParameterCallbackHandle> _cb_handle_2;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr _cur_pntcld = nullptr;
 };
 
 

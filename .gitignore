@@ -7,3 +7,4 @@ rosbag*
 *metadata.json
 launch/__pycache__/
 .vscode/
+test/

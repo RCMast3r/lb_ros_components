@@ -12,7 +12,7 @@ def generate_launch_description():
     config = os.path.join(
       get_package_share_directory('lidar_bike_components'),
       'config',
-      'config.yaml'
+      'config_local.yaml'
       )
     
     container = ComposableNodeContainer(    
@@ -23,27 +23,19 @@ def generate_launch_description():
             composable_node_descriptions=[
                 ComposableNode(
                     package='lidar_bike_components',
-                    plugin='lidar_bike_components::MCAPRecorder',
-                    name='MCAPRecorderComponent',
-                    parameters=[config]),
-                ComposableNode(
-                    package='lidar_bike_components',
-                    plugin='lidar_bike_components::CalibNode',
+                    plugin='lidar_bike_calibration::CalibNode',
                     name='CalibNodeComponent',
                     parameters=[config]),
-                    # extra_arguments=[{'use_intra_process_comms': True}]),
                 ComposableNode(
-                    package='v4l2_camera',
-                    plugin='v4l2_camera::V4L2Camera',
-                    name='v4l2_camera',
-                    parameters=[config])    
-                # ComposableNode(
-                #     package='ouster_ros',
-                #     plugin='ouster_ros::OusterDriver',
-                #     name='driver',
-                #     # extra_arguments=[{'use_intra_process_comms': True}],
-                #     parameters=[config]),
-                
+                    package='rosbag2_transport',
+                    plugin='rosbag2_transport::Player',
+                    name='player',
+                    parameters=[config]),
+                ComposableNode(
+                    package='foxglove_bridge',
+                    plugin='foxglove_bridge::FoxgloveBridge',
+                    name='fb',
+                    parameters=[config])
             ],
             output='both',
     )
