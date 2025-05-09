@@ -131,10 +131,12 @@ player:
       #   nsec: 00000000
       start_paused: false
     storage:
-      uri: "/home/ben/LiDAR-Bike/data/lb_rosbag_1701901810_0_r.mcap"
+      uri: "/home/ben/lb_ros_components/lb_rosbag_1738674363/lb_rosbag_1738674363_0.mcap"
       storage_id: "mcap"
       storage_config_uri: ""
 
 calib_node:
   ros__parameters:
     camera_matrix_row_major: [1.16315864e+03, 0.00000000e+00, 2.80054226e+02, 0.00000000e+00, 1.13928846e+03, 1.86520649e+02, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]
+    image_frame: "camera"
+    lidar_frame: "lidar"

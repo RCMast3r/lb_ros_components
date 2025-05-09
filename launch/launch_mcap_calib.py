@@ -9,12 +9,12 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     """Generate launch description with multiple components."""
 
-    config = os.path.join(
-      get_package_share_directory('lidar_bike_components'),
-      'config',
-      'config_local.yaml'
-      )
-    
+    # config = os.path.join(
+    #   get_package_share_directory('lidar_bike_components'),
+    #   'config',
+    #   'config_local.yaml'
+    #   )
+    config = os.path.join('config', 'config_local.yaml') 
     container = ComposableNodeContainer(    
             name='test_cont',
             namespace='',
