@@ -133,6 +133,8 @@
                 lidar-bike-components
                 pcl-ros
                 glim-ros2
+                tf2-ros
+                tf2-tools
               ];
             })
             

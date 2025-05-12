@@ -63,6 +63,9 @@ lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options
   _cb_handle = _param_subscriber->add_parameter_callback("distortion_coefficients", cb);
   _cb_handle_2 = _param_subscriber->add_parameter_callback("camera_matrix_row_major", cb);
     _tf_static_broadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
+
+_camera_info_pub = this->create_publisher<sensor_msgs::msg::CameraInfo>(
+    "/camera_info", rclcpp::QoS(10));
 }
 
 void lidar_bike_calibration::CalibNode::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
@@ -86,6 +89,34 @@ void lidar_bike_calibration::CalibNode::image_callback(const sensor_msgs::msg::I
     t.transform.rotation.w = quat.w();
 
     _tf_static_broadcaster->sendTransform(t);
+
+    // New CameraInfo message
+    sensor_msgs::msg::CameraInfo cam_info;
+    cam_info.header.stamp = msg->header.stamp;
+    cam_info.header.frame_id = _image_frame;
+    cam_info.height = msg->height;
+    cam_info.width = msg->width;
+
+    // Distortion model and coefficients
+    cam_info.distortion_model = "plumb_bob";
+    cam_info.d = _distortion_params;
+
+    // Camera matrix K (row-major input)
+    if (_cam_matrix_params.size() == 9) {
+        std::copy(_cam_matrix_params.begin(), _cam_matrix_params.end(), cam_info.k.begin());
+    }
+
+    // Rectification matrix R (identity)
+    cam_info.r = {1.0, 0.0, 0.0,
+                  0.0, 1.0, 0.0,
+                  0.0, 0.0, 1.0};
+
+    // Projection matrix P (K augmented with zeros)
+    cam_info.p = { cam_info.k[0], cam_info.k[1], cam_info.k[2], 0.0,
+                   cam_info.k[3], cam_info.k[4], cam_info.k[5], 0.0,
+                   cam_info.k[6], cam_info.k[7], cam_info.k[8], 0.0 };
+
+    _camera_info_pub->publish(cam_info);
 }
 
 void lidar_bike_calibration::CalibNode::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)

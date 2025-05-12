@@ -8,3 +8,4 @@ rosbag*
 launch/__pycache__/
 .vscode/
 test/
+*.mcap
