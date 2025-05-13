@@ -17,6 +17,8 @@ find_package(httplib REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(PCL COMPONENTS common REQUIRED)
 find_package(pcl_conversions REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 # https://docs.ros.org/en/jazzy/Tutorials/Advanced/Recording-A-Bag-From-Your-Own-Node-CPP.html
 add_library(lidar_bike_components SHARED src/MCAPWriter.cpp) 
@@ -25,7 +27,7 @@ set_target_properties(lidar_bike_components PROPERTIES CXX_STANDARD 20)
 set_target_properties(lidar_bike_calibration PROPERTIES CXX_STANDARD 20)
 
 ament_target_dependencies(lidar_bike_components PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge)
-ament_target_dependencies(lidar_bike_calibration PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge pcl_conversions)
+ament_target_dependencies(lidar_bike_calibration PUBLIC rosbag2_cpp rclcpp sensor_msgs rclcpp_components message_filters cv_bridge pcl_conversions tf2 tf2_ros)
 
 target_link_libraries(lidar_bike_components PUBLIC httplib::httplib)
 

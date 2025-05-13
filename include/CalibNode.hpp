@@ -33,9 +33,15 @@
 
 
 #include <sensor_msgs/msg/point_cloud2.hpp>
+#include <sensor_msgs/msg/camera_info.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
+
+#include <rclcpp/rclcpp.hpp>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <tf2/LinearMath/Quaternion.h>
 
 
 namespace lidar_bike_calibration {
@@ -64,6 +70,12 @@ private:
     std::shared_ptr<rclcpp::ParameterCallbackHandle> _cb_handle;
     std::shared_ptr<rclcpp::ParameterCallbackHandle> _cb_handle_2;
     pcl::PointCloud<pcl::PointXYZ>::Ptr _cur_pntcld = nullptr;
+
+    std::shared_ptr<tf2_ros::StaticTransformBroadcaster> _tf_static_broadcaster;
+    rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr _camera_info_pub;
+
+    std::string _lidar_frame, _image_frame;
+
 };
 
 

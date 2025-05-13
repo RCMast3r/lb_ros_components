@@ -14,6 +14,9 @@ lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options
     this->declare_parameter<std::vector<double>>("distortion_coefficients", _distortion_params);
     this->declare_parameter<std::vector<double>>("camera_matrix_row_major", _cam_matrix_params);
     this->declare_parameter<std::vector<double>>("tf_params", _tf_params); // x y z r p y
+    this->declare_parameter<std::string>("image_frame", "image"); 
+    this->declare_parameter<std::string>("lidar_frame", "ouster"); 
+    
     // Initialize the ROS 2 subscriptions
     _subscription_pointcloud = this->create_subscription<sensor_msgs::msg::PointCloud2>(
         this->get_parameter("pointcloud_topic").as_string(), rclcpp::SensorDataQoS(),
@@ -30,7 +33,8 @@ lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options
     this->get_parameter("distortion_coefficients", _distortion_params);
     this->get_parameter("camera_matrix_row_major", _cam_matrix_params);
     this->get_parameter("tf_params", _tf_params);
-
+    this->get_parameter("image_frame", _image_frame);
+    this->get_parameter("lidar_frame", _lidar_frame);
     auto cb = [this](const rclcpp::Parameter & p) {
 
         if(p.get_name() == std::string("distortion_coefficients")) {
@@ -58,92 +62,98 @@ lidar_bike_calibration::CalibNode::CalibNode(const rclcpp::NodeOptions & options
     };
   _cb_handle = _param_subscriber->add_parameter_callback("distortion_coefficients", cb);
   _cb_handle_2 = _param_subscriber->add_parameter_callback("camera_matrix_row_major", cb);
+    _tf_static_broadcaster = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
+
+_camera_info_pub = this->create_publisher<sensor_msgs::msg::CameraInfo>(
+    "/camera_info", rclcpp::QoS(10));
 }
 
 void lidar_bike_calibration::CalibNode::image_callback(const sensor_msgs::msg::Image::SharedPtr msg)
 {
-    RCLCPP_INFO(this->get_logger(), "image cb");
-    auto mb = cv_bridge::toCvCopy((*msg), msg->encoding);
-    cv::Mat image_test = mb->image;
-    cv::imshow("Display window 2", image_test);
-    if(_cur_pntcld)
-    {
-    //     Eigen::Matrix<float, 3, 4> transform;
-    // transform << -0.103133168138869, -0.994667367582627, 0.000614406939186479, 0.0230245696651290,
-    //     0.0738907892845924, -0.00827743798191837, -0.997231986690838, -0.0939116569250688,
-    //     0.991919200786304, -0.102802295143166, 0.0743504352694564, 0.103364651051617;
-    Eigen::Matrix3f calib;
-    calib << _cam_matrix_params[0], _cam_matrix_params[1], _cam_matrix_params[2],
-             _cam_matrix_params[3], _cam_matrix_params[4], _cam_matrix_params[5],
-             _cam_matrix_params[6], _cam_matrix_params[7], _cam_matrix_params[8];
-             
-    std::vector<cv::Point2d> cameraFramePoints;
+    geometry_msgs::msg::TransformStamped t;
 
-    auto mat_bridged = cv_bridge::toCvCopy((*msg), msg->encoding);
+    t.header.stamp = msg->header.stamp;
+    t.header.frame_id = _lidar_frame;
+    t.child_frame_id = _image_frame;
 
-    cv::Mat image = mat_bridged->image;
-    for (auto p : (_cur_pntcld->points) )
-    {
-      Eigen::Vector3f e_point(p.x, p.y, p.z);
+    t.transform.translation.x = _tf_params[0];
+    t.transform.translation.y = _tf_params[1];
+    t.transform.translation.z = _tf_params[2];
 
-      Eigen::Vector3f e_point_inv = calib * e_point; // point should already be transformed
-      cv::Point2d cv_point(e_point_inv(0) / e_point_inv(2), e_point_inv(1) / e_point_inv(2));
-      cameraFramePoints.push_back(cv_point);
-    }
-    for (auto p : cameraFramePoints)
-    {
-      if (p.x == std::clamp(p.x, (double)0.0, (double)1920.0))
-      {
-        if (p.y == std::clamp(p.y, (double)0.0, (double)1080.0))
-        {
-          cv::circle(image, cv::Point(p.x, p.y), 5, cv::Scalar(255, 255, 255), cv::FILLED, 8, 0);
-        }
-      }
+    tf2::Quaternion quat;
+    quat.setRPY(_tf_params[3], _tf_params[4], _tf_params[5]);
+
+    t.transform.rotation.x = quat.x();
+    t.transform.rotation.y = quat.y();
+    t.transform.rotation.z = quat.z();
+    t.transform.rotation.w = quat.w();
+
+    _tf_static_broadcaster->sendTransform(t);
+
+    // New CameraInfo message
+    sensor_msgs::msg::CameraInfo cam_info;
+    cam_info.header.stamp = msg->header.stamp;
+    cam_info.header.frame_id = _image_frame;
+    cam_info.height = msg->height;
+    cam_info.width = msg->width;
+
+    // Distortion model and coefficients
+    cam_info.distortion_model = "plumb_bob";
+    cam_info.d = _distortion_params;
+
+    // Camera matrix K (row-major input)
+    if (_cam_matrix_params.size() == 9) {
+        std::copy(_cam_matrix_params.begin(), _cam_matrix_params.end(), cam_info.k.begin());
     }
 
-    cv::imshow("Display window", image);
+    // Rectification matrix R (identity)
+    cam_info.r = {1.0, 0.0, 0.0,
+                  0.0, 1.0, 0.0,
+                  0.0, 0.0, 1.0};
 
+    // Projection matrix P (K augmented with zeros)
+    cam_info.p = { cam_info.k[0], cam_info.k[1], cam_info.k[2], 0.0,
+                   cam_info.k[3], cam_info.k[4], cam_info.k[5], 0.0,
+                   cam_info.k[6], cam_info.k[7], cam_info.k[8], 0.0 };
 
-        // TODO transform into image frame
-        // TODO display points on image with opencv
-    }
+    _camera_info_pub->publish(cam_info);
 }
 
 void lidar_bike_calibration::CalibNode::pointcloud_callback(const sensor_msgs::msg::PointCloud2::SharedPtr msg)
 {
     // Example Euler angles
     // double ai = 0.0, aj = 0.0, ak = 0.0;
-    Eigen::Quaterniond q = _quat_from_euler(_tf_params[3], _tf_params[4], _tf_params[5]);
+    // Eigen::Quaterniond q = _quat_from_euler(_tf_params[3], _tf_params[4], _tf_params[5]);
 
-    // Example translation
-    Eigen::Vector3d t(_tf_params[0], _tf_params[1], _tf_params[2]);
+    // // Example translation
+    // Eigen::Vector3d t(_tf_params[0], _tf_params[1], _tf_params[2]);
 
-    // Convert ROS PointCloud2 to PCL PointCloud
-    pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_raw(new pcl::PointCloud<pcl::PointXYZ>);
-    pcl::fromROSMsg(*msg, *pcl_raw);
+    // // Convert ROS PointCloud2 to PCL PointCloud
+    // pcl::PointCloud<pcl::PointXYZ>::Ptr pcl_raw(new pcl::PointCloud<pcl::PointXYZ>);
+    // pcl::fromROSMsg(*msg, *pcl_raw);
 
-    // Allocate or reset your member variable
-    _cur_pntcld = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
-    _cur_pntcld->header = pcl_raw->header;
-    _cur_pntcld->is_dense = pcl_raw->is_dense;
-    _cur_pntcld->width = pcl_raw->width;
-    _cur_pntcld->height = pcl_raw->height;
+    // // Allocate or reset your member variable
+    // _cur_pntcld = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    // _cur_pntcld->header = pcl_raw->header;
+    // _cur_pntcld->is_dense = pcl_raw->is_dense;
+    // _cur_pntcld->width = pcl_raw->width;
+    // _cur_pntcld->height = pcl_raw->height;
 
-    // Resize and transform each point
-    _cur_pntcld->points.resize(pcl_raw->points.size());
+    // // Resize and transform each point
+    // _cur_pntcld->points.resize(pcl_raw->points.size());
 
-    for (std::size_t i = 0; i < pcl_raw->points.size(); ++i)
-    {
-        const auto& pt_in = pcl_raw->points[i];
-        Eigen::Vector3d p(pt_in.x, pt_in.y, pt_in.z);
-        Eigen::Vector3d p_transformed = q * p + t;
+    // for (std::size_t i = 0; i < pcl_raw->points.size(); ++i)
+    // {
+    //     const auto& pt_in = pcl_raw->points[i];
+    //     Eigen::Vector3d p(pt_in.x, pt_in.y, pt_in.z);
+    //     Eigen::Vector3d p_transformed = q * p + t;
 
-        auto& pt_out = _cur_pntcld->points[i];
-        pt_out.x = static_cast<float>(p_transformed.x());
-        pt_out.y = static_cast<float>(p_transformed.y());
-        pt_out.z = static_cast<float>(p_transformed.z());
-    }
-    RCLCPP_INFO(this->get_logger(), "pointcloud cb");
+    //     auto& pt_out = _cur_pntcld->points[i];
+    //     pt_out.x = static_cast<float>(p_transformed.x());
+    //     pt_out.y = static_cast<float>(p_transformed.y());
+    //     pt_out.z = static_cast<float>(p_transformed.z());
+    // }
+    // RCLCPP_INFO(this->get_logger(), "pointcloud cb");
 }
 
 // roll, pitch, yaw
